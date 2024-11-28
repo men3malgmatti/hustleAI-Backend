@@ -1,0 +1,106 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "questionText": "What skills or hobbies do you currently have or enjoy? (Select all that apply)",
+      "questionType": "multi-select",
+      "options": [
+        "🖌️ Creative skills (e.g. graphic design- video editing- crafting)",
+        "💻 Tech skills (e.g., coding- web development- app development)",
+        "📱 Social media skills (e.g.- content creation- social media management)",
+        "✍️ Writing and communication (e.g. blogging- copywriting- public speaking)",
+        "📚 Teaching or mentoring",
+        "🛠️ Hands-on skills (e.g. DIY- repair- event planning)",
+        "🌟 Other (Specify)"
+      ]
+    },
+    {
+      "id": "q2",
+      "questionText": "How much time can you dedicate to a side hustle per week?",
+      "questionType": "select",
+      "options": [
+        "⏱️ Less than 5 hours",
+        "⏱️ 5–10 hours",
+        "⏱️ 10–20 hours",
+        "⏱️ 20+ hours"
+      ]
+    },
+    {
+      "id": "q3",
+      "questionText": "What is your primary goal for starting a side hustle? (Select one)",
+      "questionType": "select",
+      "options": [
+        "💵 Extra income",
+        "🎓 Building new skills",
+        "🌐 Expanding my network",
+        "🚀 Turning it into a full-time business",
+        "🌟 Other (Specify)"
+      ]
+    },
+    {
+      "id": "q4",
+      "questionText": "Do you prefer working online, offline, or a mix of both?",
+      "questionType": "select",
+      "options": [
+        "🌐 Online only",
+        "🏢 Offline only",
+        "🔄 A mix of both"
+      ]
+    },
+    {
+      "id": "q5",
+      "questionText": "Are you comfortable investing money upfront to start your side hustle? If yes, how much?",
+      "questionType": "select",
+      "options": [
+        "❌ No investment",
+        "💸 Under $100",
+        "💵 $100–$500",
+        "💰 $500+"
+      ]
+    },
+    {
+      "id": "q6",
+      "questionText": "What concerns you most about starting a side hustle?",
+      "questionType": "select",
+      "options": [
+        "❓ Not knowing where to start or who to trust",
+        "🚫 Falling for unrealistic promises or scams",
+        "⏳ Wasting time on things that don’t work",
+        "💰 Investing time and effort without clear results"
+      ]
+    },
+    {
+      "id": "q7",
+      "questionText": "Which of these approaches to success resonates most with you?",
+      "questionType": "select",
+      "options": [
+        "🏋️ 'Hard work and dedication lead to sustainable results.'",
+        "📚 'Learning and skill-building are key to long-term success.'",
+        "📊 'Using data and credible insights to make smart decisions.'",
+        "💨 'Quick wins are fine, but I value steady growth.'"
+      ]
+    },
+    {
+      "id": "q8",
+      "questionText": "How confident are you in finding the right side hustle for yourself?",
+      "questionType": "select",
+      "options": [
+        "🤔 Not confident at all – I don’t know where to start.",
+        "😬 Somewhat confident – I have an idea but need guidance.",
+        "😊 Confident – I know what I want but need a clear roadmap.",
+        "💪 Very confident – I just need tools to track my progress."
+      ]
+    },
+    {
+      "id": "q9",
+      "questionText": "What would make you feel fully prepared to succeed in a side hustle?",
+      "questionType": "select",
+      "options": [
+        "✅ A personalized roadmap to get started.",
+        "🛠️ Tools and resources to learn new skills.",
+        "📈 Insights into earning potential and market trends.",
+        "🤝 Access to a community of like-minded side hustlers."
+      ]
+    }
+  ]
+}
