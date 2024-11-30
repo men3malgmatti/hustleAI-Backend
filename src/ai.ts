@@ -373,7 +373,7 @@ export const getSideHustlesFitBasedOnAnswers = async (answers:{
   // const chatResponse= await ai.chat(systemMessage, userMessage, jsonSchema);
 
   // read the response from a file
-  const chatResponse= require('./response.json');
+  const chatResponse= require('../response.json');
 
 
   const content = chatResponse.choices[0].message.content;
@@ -391,7 +391,7 @@ export const getSideHustlesFitBasedOnAnswers = async (answers:{
   
   // write the response to a file
     const fs = require('fs');
-    fs.writeFile('response.json', JSON.stringify(chatResponse), (err: any) => {
+    fs.writeFile('../response.json', JSON.stringify(chatResponse), (err: any) => {
       if (err) {
         throw err;
       }
@@ -443,7 +443,7 @@ export const getSideHustleRoadmap = async (sideHustleRoadmapRequest:SideHustleRo
 
   // read the response from a file
 
-  const chatResponse= require('./roadmap.json');
+  const chatResponse= require('../roadmap.json');
 
   const content = chatResponse.choices[0].message.content;
 

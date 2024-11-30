@@ -1,4 +1,6 @@
 import express from "express";
+import { User as DbUser } from "./db/models";
+
 
 
 export interface Request extends express.Request {
@@ -22,3 +24,5 @@ export type RoadmapResponse = {
     tasks: string[];
   };
   
+
+  export interface UserRecord extends DbUser{}

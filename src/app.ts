@@ -8,6 +8,10 @@ import authenticate from './middlewares/expressAuth';
 import { Request } from './types';
 import { adminOnboardingRoutes } from './routes/adminOnbourding';
 import { syncModels } from './db/models';
+import { userInfoRoute } from './routes/userInfo';
+import UsersStore from './classes/UsersStore';
+import { deleteUserRoute } from './routes/deleteUser';
+import { completeRegistrationRoute } from './routes/completeRegistration';
 
 const app = express();
 const port = 3000;
@@ -45,11 +49,14 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use(authenticate);
  
 
-
+const userStore= new UsersStore();
 
 onboardingRoutes(app);
 roadmapRoutes(app);
 adminOnboardingRoutes(app);
+userInfoRoute(app,userStore);
+deleteUserRoute(app,userStore);
+completeRegistrationRoute(app,userStore);
 
 
 setAdmin();
