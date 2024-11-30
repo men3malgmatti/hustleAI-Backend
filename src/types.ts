@@ -1,4 +1,9 @@
+import express from "express";
 
+
+export interface Request extends express.Request {
+  userInfo: {uid:string,email:string};
+}
 
 export type RoadmapResponse = {
     roadmap: Level[];

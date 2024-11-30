@@ -1,0 +1,82 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Login Section */
+#login {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    max-width: 300px;
+    margin: auto;
+    text-align: center;
+}
+
+/* Buttons */
+button {
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 5px 0;
+}
+
+button:hover {
+    background-color: #357ae8;
+}
+
+/* Admin Dashboard */
+#adminDashboard {
+    margin-top: 20px;
+}
+
+#adminDashboard h2, #adminDashboard h3 {
+    color: #333;
+}
+
+form input, form select {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    box-sizing: border-box;
+}
+
+form button {
+    width: 100%;
+}
+
+/* Questions List */
+#questionsList {
+    margin-top: 20px;
+}
+
+#questions li {
+    background: #fff;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 3px;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#questions li ul {
+    margin-top: 5px;
+}
+
+#questions li button {
+    margin-left: 5px;
+}
+
+/* Hidden Elements */
+#logoutButton, #adminDashboard, #questionsList {
+    display: none;
+}

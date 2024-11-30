@@ -1,4 +1,4 @@
- import chatResponse from  "../roadmap.json";
+ import chatResponse from  "../../roadmap.json";
 
 
 export const roadmapRoutes = (app) => {

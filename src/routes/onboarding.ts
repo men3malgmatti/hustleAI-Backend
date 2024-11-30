@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import questionsData from "../questions.json"; // Import questions data
+import questionsData from "../../questions.json"; // Import questions data
 import { getSideHustleRoadmap, getSideHustlesFitBasedOnAnswers, SideHustleRoadmapRequest } from "../ai";
 
 export type OnboardingQuestion={

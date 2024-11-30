@@ -1,0 +1,350 @@
+<!-- ...existing code... -->
+<head>
+    <!-- ...existing code... -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Import Firebase Auth SDK -->
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js"></script>
+</head>
+<body>
+    <!-- ...existing code... -->
+    <!-- Add Google Sign-In Button -->
+    <div id="login">
+        <h2>Sign in with Google</h2>
+        <button id="googleLoginButton">Sign in with Google</button>
+    </div>
+    <!-- Add Logout Button -->
+    <button id="logoutButton" style="display: none;">Logout</button>
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" style="display: none;">
+        <h2>Admin Dashboard</h2>
+        <!-- Create Question Form -->
+        <h3>Create a New Question</h3>
+        <form id="createQuestionForm">
+            <input type="text" id="questionText" placeholder="Question Text" required><br>
+            <!-- Replace the questionType input with a select element -->
+            <select id="questionType" required>
+                <option value="">Select Question Type</option>
+                <option value="text">Text</option>
+                <option value="select">Select</option>
+                <option value="multi-select">Multi-select</option>
+            </select><br>
+            <input type="text" id="options" placeholder="Options (comma-separated)"><br>
+            <button type="submit">Create Question</button>
+        </form>
+        <!-- ...additional UI elements for reading, updating, and deleting questions... -->
+    </div>
+    <!-- Questions List -->
+    <div id="questionsList" style="display: none;">
+        <h3>Existing Questions</h3>
+        <ul id="questions"></ul>
+    </div>
+    <!-- ...existing code... -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyAA_02HaeBKEKJ3bWwtKwkAc2GjHuPJRiU",
+            authDomain: "social-app-a0a1b.firebaseapp.com",
+            projectId: "social-app-a0a1b",
+            storageBucket: "social-app-a0a1b.firebasestorage.app",
+            messagingSenderId: "443065301544",
+            appId: "1:443065301544:web:30721041737b72baf2d31d",
+            measurementId: "G-5EBM9JV7Y5"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // On page load, check for token in localStorage
+        window.addEventListener('load', async () => {
+            const idToken = localStorage.getItem('idToken');
+            if (idToken) {
+                // Hide login and show admin dashboard
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'block';
+                document.getElementById('questionsList').style.display = 'block';
+                document.getElementById('logoutButton').style.display = 'block';
+                // Fetch existing questions using the stored token
+                fetch('/admin/onboarding/questions', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + idToken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Questions:', data);
+
+                    // Ensure 'questions' is an array
+                    const questions = data.questions || [];
+
+                    // Clear existing list items
+                    const questionsList = document.getElementById('questions');
+                    questionsList.innerHTML = '';
+
+                    // Populate the questions list
+                    questions.forEach(question => {
+                        addQuestionToList(question, idToken);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        });
+
+        // Google Sign-In functionality
+        document.getElementById('googleLoginButton').addEventListener('click', function() {
+            signInWithPopup(auth, provider)
+                .then(async (result) => {
+                    // Signed in
+                    const user = result.user;
+                    // Get ID Token and store it
+                    const idToken = await user.getIdToken();
+                    localStorage.setItem('idToken', idToken);
+                    // Hide login and show admin dashboard
+                    document.getElementById('login').style.display = 'none';
+                    document.getElementById('adminDashboard').style.display = 'block';
+                    document.getElementById('questionsList').style.display = 'block';
+                    document.getElementById('logoutButton').style.display = 'block';
+                    // Fetch existing questions
+                    fetch('/admin/onboarding/questions', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + idToken
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Questions:', data);
+
+                        // Ensure 'questions' is an array
+                        const questions = data.questions || [];
+
+                        // Clear existing list items
+                        const questionsList = document.getElementById('questions');
+                        questionsList.innerHTML = '';
+
+                        // Populate the questions list
+                        questions.forEach(question => {
+                            addQuestionToList(question, idToken);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                    // Event listener for creating a question
+                    document.getElementById('createQuestionForm').addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const questionText = document.getElementById('questionText').value;
+                        const questionType = document.getElementById('questionType').value;
+                        const options = document.getElementById('options').value.split(',');
+                        fetch('/admin/onboarding/questions', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + idToken
+                            },
+                            body: JSON.stringify({ questionText, questionType, options })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Question created:', data);
+                            // Add the new question to the list
+                            addQuestionToList(data.question, idToken);
+                            // Clear the form inputs
+                            document.getElementById('createQuestionForm').reset();
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                    });
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.log(errorCode, errorMessage);
+                });
+        });
+
+        // Logout functionality
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            auth.signOut().then(() => {
+                // Clear ID Token from localStorage
+                localStorage.removeItem('idToken');
+                // Update UI
+                document.getElementById('login').style.display = 'block';
+                document.getElementById('adminDashboard').style.display = 'none';
+                document.getElementById('questionsList').style.display = 'none';
+                document.getElementById('logoutButton').style.display = 'none';
+            });
+        });
+
+        // Update fetch calls to use idToken from localStorage
+        // Event listener for creating a question
+        document.getElementById('createQuestionForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const idToken = localStorage.getItem('idToken');
+            const questionText = document.getElementById('questionText').value;
+            const questionType = document.getElementById('questionType').value;
+            const options = document.getElementById('options').value.split(',');
+            fetch('/admin/onboarding/questions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + idToken
+                },
+                body: JSON.stringify({ questionText, questionType, options })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Question created:', data);
+                // Add the new question to the list
+                addQuestionToList(data.question, idToken);
+                // Clear the form inputs
+                document.getElementById('createQuestionForm').reset();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        // Function to add a question to the DOM
+        function addQuestionToList(question, idToken) {
+            const questionsList = document.getElementById('questions');
+            const li = document.createElement('li');
+            li.textContent = question.questionText;
+            
+            // Display question options if they exist
+            if (question.options && question.options.length > 0) {
+                const optionsList = document.createElement('ul');
+                question.options.forEach(option => {
+                    const optionItem = document.createElement('li');
+                    optionItem.textContent = option.trim();
+                    optionsList.appendChild(optionItem);
+                });
+                li.appendChild(optionsList);
+            }
+
+            // Update button
+            const updateButton = document.createElement('button');
+            updateButton.textContent = 'Update';
+            updateButton.addEventListener('click', () => {
+                // Replace question text with input field
+                const questionInput = document.createElement('input');
+                questionInput.type = 'text';
+                questionInput.value = question.questionText;
+                li.insertBefore(questionInput, li.firstChild);
+                li.removeChild(li.childNodes[1]); // Remove text node
+
+                // Replace options with input field if options exist
+                let optionsInput;
+                if (question.options && question.options.length > 0) {
+                    optionsInput = document.createElement('input');
+                    optionsInput.type = 'text';
+                    optionsInput.value = question.options.join(', ');
+                    li.insertBefore(optionsInput, li.children[1]);
+                }
+
+                // Change Update button to Save
+                updateButton.textContent = 'Save';
+                updateButton.onclick = () => {
+                    const updatedText = questionInput.value;
+                    const updatedOptions = optionsInput ? optionsInput.value.split(',').map(opt => opt.trim()) : [];
+
+                    console.log('Updated text:', updatedText);
+                    
+
+
+                    fetch(`/admin/onboarding/questions/${question.id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + idToken
+                        },
+                        body: JSON.stringify({ questionText: updatedText, options: updatedOptions })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Replace input fields with updated text
+                        li.textContent = data.question.questionText;
+                        
+                        // Re-add options to the DOM if they exist
+                        if (data.question.options && data.question.options.length > 0) {
+                            const optionsList = document.createElement('ul');
+                            data.question.options.forEach(option => {
+                                const optionItem = document.createElement('li');
+                                optionItem.textContent = option;
+                                optionsList.appendChild(optionItem);
+                            });
+                            li.appendChild(optionsList);
+                        }
+
+                        // Reset button text
+                        updateButton.textContent = 'Update';
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                };
+            });
+
+            // Delete button
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click', () => {
+                fetch(`/admin/onboarding/questions/${question.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + idToken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Question deleted:', data);
+                    li.remove();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            li.appendChild(updateButton);
+            li.appendChild(deleteButton);
+            questionsList.appendChild(li);
+        }
+
+        // Modify the code where questions are initially fetched
+        fetch('/admin/onboarding/questions', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + idToken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Questions:', data);
+            const questions = data.questions || [];
+            const questionsList = document.getElementById('questions');
+            questionsList.innerHTML = '';
+            questions.forEach(question => {
+                addQuestionToList(question, idToken);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    </script>
+    <!-- ...existing code... -->
+</body>
+<!-- ...existing code... -->
