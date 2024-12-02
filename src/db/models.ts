@@ -1,7 +1,7 @@
 import  { DataTypes, ForeignKey, HasManyAddAssociationMixin, HasManyAddAssociationsMixin, HasManyCountAssociationsMixin, HasManyCreateAssociationMixin, HasManyGetAssociationsMixin, HasManyHasAssociationMixin, HasManyHasAssociationsMixin, HasManyRemoveAssociationMixin, HasManyRemoveAssociationsMixin, HasManySetAssociationsMixin, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, HasOneSetAssociationMixin, NonAttribute } from 'sequelize'; 
 import sequelize from './pgSequelize';
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import { RoadmapResponse } from '../types';
+import { RoadmapSteps } from '../types';
 
 
 
@@ -18,6 +18,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
     declare balance: number|null;
     declare deviceToken: string|null;
     declare numberOfMissedNotifications: number;
+    declare answers: Record<string, string>|null;
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
@@ -78,6 +79,11 @@ User.init({
         defaultValue: 0
       },
 
+      answers:{
+        type: DataTypes.JSONB,
+        allowNull: true,
+      },
+
       createdAt: {
         type: DataTypes.DATE,
       },
@@ -94,8 +100,9 @@ User.init({
 export class Roadmap extends Model<InferAttributes<Roadmap>, InferCreationAttributes<Roadmap>> {
     declare id: string;
     declare name: string;
-    declare roadmapData: RoadmapResponse;
-    declare UserId: string;
+    declare roadmapData: RoadmapSteps;
+    declare userId: ForeignKey<User['id']>;
+    declare progress: number; // new property to track progress
     declare createdAt?: Date;
     declare updatedAt?: Date;
 }
@@ -115,12 +122,16 @@ Roadmap.init(
         type: DataTypes.JSONB, // Use JSONB for Postgres to allow indexing and better performance
         allowNull: false,
       },
-      UserId: {
-        type: DataTypes.UUID,
+      progress: {
+        type: DataTypes.INTEGER, // or DataTypes.INTEGER if you prefer whole numbers
+        defaultValue: 0,
         allowNull: false,
       },
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE,
+
+       
+
     },
     {
       sequelize,
@@ -128,11 +139,6 @@ Roadmap.init(
       tableName: 'roadmap',
     }
   );
-
-
-
-
-
 
 
 export class OnboardingQuestion extends Model<
@@ -222,7 +228,7 @@ UserOnboardingAnswer.belongsTo(User, { foreignKey: 'userId' });
 UserOnboardingAnswer.belongsTo(OnboardingQuestion, { foreignKey: 'questionId' });
 
 
-User.hasMany(Roadmap);
+User.hasMany(Roadmap, { foreignKey: {name:'userId',allowNull:false}});
 Roadmap.belongsTo(User);
 
 

@@ -1,4 +1,6 @@
  import chatResponse from  "../../roadmap.json";
+import { Roadmap } from "../db/models";
+import { Request } from "../types";
 
 
 export const roadmapRoutes = (app) => {
@@ -12,7 +14,18 @@ export const roadmapRoutes = (app) => {
 
   const parsedContent = JSON.parse(content);
 
-  console.log({parsedContent});
+  // console.log({parsedContent});
+
+  // get user roadmap from db
+
+  const roadmap = await Roadmap.findOne({where:{userId:req.userInfo.uid}});
+
+  // console.log('====================================');
+  // console.log('roadmap',roadmap.toJSON().roadmapData.roadmap);
+  // console.log('====================================');
+
+  
+
 
   parsedContent.roadmap.forEach((level: any) => {
     console.log("Level:", level.level_name);
@@ -27,7 +40,7 @@ export const roadmapRoutes = (app) => {
 
 
 
-        res.json({roadmap: parsedContent.roadmap });
+        res.json({roadmap });
             
     });
     

@@ -1,5 +1,5 @@
 import express from "express";
-import { User as DbUser } from "./db/models";
+import { User as DbUser, Roadmap } from "./db/models";
 
 
 
@@ -7,7 +7,7 @@ export interface Request extends express.Request {
   userInfo: {uid:string,email:string};
 }
 
-export type RoadmapResponse = {
+export type RoadmapSteps = {
     roadmap: Level[];
   };
   
@@ -25,4 +25,6 @@ export type RoadmapResponse = {
   };
   
 
+
   export interface UserRecord extends DbUser{}
+

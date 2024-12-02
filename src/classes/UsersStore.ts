@@ -634,6 +634,26 @@ class UsersStore{
     //         throw error
     //     }
     // }
+
+
+    async saveUserAnswers(userId:string,answers:any){
+        try {
+            const user= await this.userModel.findOne({where:{id:userId}})
+            if (!user) {
+                throw new Error("User not found");
+            }
+            user.answers=answers
+            await user.save()
+            return user
+        } catch (error) {
+            console.log('====================================');
+            console.log('error saving user answers',error);
+            console.log('====================================');
+            throw error
+        }
+    }
+
+    
 }
 
 

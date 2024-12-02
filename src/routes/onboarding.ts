@@ -1,6 +1,9 @@
-import { Request, Response } from "express";
+import {Response } from "express";
 import questionsData from "../../questions.json"; // Import questions data
 import { getSideHustleRoadmap, getSideHustlesFitBasedOnAnswers, SideHustleRoadmapRequest } from "../ai";
+import UsersStore from "../classes/UsersStore";
+import { Request } from "../types";
+import { Roadmap } from "../db/models";
 
 export type OnboardingQuestion={
     id:string,
@@ -29,7 +32,7 @@ const questionKeywords = {
 };
 
 
-export const onboardingRoutes = (app) => {
+export const onboardingRoutes = (app, usersStore:UsersStore) => {
   // Fetch onboarding questions
   app.get('/onboarding/questions', async (req: Request, res: Response) => {
     console.log('====================================');
@@ -46,11 +49,12 @@ export const onboardingRoutes = (app) => {
 
   // Submit answers
   app.post('/onboarding/answers', async (req: Request, res: Response) => {
-    console.log('====================================');
-    console.log('onboardingRoutes',req.body);
-    console.log('====================================');
-
+ 
     const { answers } = req.body as { answers: OnboardingAnswer[] };
+
+    const {uid} = req.userInfo;
+
+    
 
     console.log('====================================');
     console.log('answers',answers);
@@ -68,11 +72,26 @@ export const onboardingRoutes = (app) => {
     console.log('parseAnswersForAi',parseAnswersForAi);
     console.log('====================================');
 
+
+    // save parsed answers to db
+
+    try {
+
+      const sideHustles = await getSideHustlesFitBasedOnAnswers(parseAnswersForAi);
+      
+      await usersStore.saveUserAnswers(uid,parseAnswersForAi);        
+
+      res.json({ success: true, data: sideHustles });
+    
+
+    } catch (error) {
+        console.log('====================================');
+        console.log('error saving answers to db',error);
+        console.log('====================================');
+    }
+
+
     // Send answers to AI
-    const sideHustles = await getSideHustlesFitBasedOnAnswers(parseAnswersForAi);
-    
-    
-    res.json({ success: true, data: sideHustles });
   });
 
 
@@ -92,6 +111,27 @@ export const onboardingRoutes = (app) => {
 
     // Send answers to AI
     const roadmap = await getSideHustleRoadmap(sideHustleRoadmapRequest);
+
+    // save roadmap to db
+
+    const {uid} = req.userInfo;
+
+    try {
+
+      // create new roadmap in db
+
+      await Roadmap.create({
+        userId:uid,
+        roadmapData:roadmap,
+        name:sideHustleRoadmapRequest.sideHustle
+      });
+
+       
+    } catch (error) {
+        console.log('====================================');
+        console.log('error saving roadmap to db',error);
+        console.log('====================================');
+    }
     
     res.json({ success: true, data: roadmap });
   });

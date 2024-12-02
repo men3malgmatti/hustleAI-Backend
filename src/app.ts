@@ -49,14 +49,14 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use(authenticate);
  
 
-const userStore= new UsersStore();
+const usersStore= new UsersStore();
 
-onboardingRoutes(app);
+onboardingRoutes(app,usersStore);
 roadmapRoutes(app);
 adminOnboardingRoutes(app);
-userInfoRoute(app,userStore);
-deleteUserRoute(app,userStore);
-completeRegistrationRoute(app,userStore);
+userInfoRoute(app,usersStore);
+deleteUserRoute(app,usersStore);
+completeRegistrationRoute(app,usersStore);
 
 
 setAdmin();
