@@ -653,6 +653,29 @@ class UsersStore{
         }
     }
 
+    async saveUserSideHustlesTopThree(userId:string,sideHustles:any){
+        try {
+            const user= await this.userModel.findOne({where:{id:userId}})
+            if (!user) {
+                throw new Error("User not found");
+            }
+            user.sideHustlesTopThree=sideHustles
+            await user.save()
+            return user
+
+        } catch (error) {
+            console.log('====================================');
+            console.log('error saving user side hustles top three',error);
+            console.log('====================================');
+            throw error
+        }
+    }
+
+    async getUserSideHustlesTopThree(userId:string){
+        const user= await this.userModel.findOne({where:{id:userId}})
+        return user?.sideHustlesTopThree
+    }
+
     
 }
 

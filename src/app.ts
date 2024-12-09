@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { onboardingRoutes } from './routes/onboarding';
-import { roadmapRoutes } from './routes/roadmap';
+import { completeTask, roadmapRoutes, topThreeSideHustles } from './routes/roadmap';
 import { setAdmin } from './utility/firebaseAuth';
 import path from 'path';
 import authenticate from './middlewares/expressAuth';
@@ -57,6 +57,8 @@ adminOnboardingRoutes(app);
 userInfoRoute(app,usersStore);
 deleteUserRoute(app,usersStore);
 completeRegistrationRoute(app,usersStore);
+topThreeSideHustles(app,usersStore);
+completeTask(app);
 
 
 setAdmin();

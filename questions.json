@@ -3,7 +3,7 @@
     {
       "id": "q1",
       "questionText": "What skills or hobbies do you currently have or enjoy? (Select all that apply)",
-      "questionType": "multi-select",
+      "questionType": "multi-select-with-input",
       "options": [
         "🖌️ Creative skills (e.g. graphic design- video editing- crafting)",
         "💻 Tech skills (e.g., coding- web development- app development)",
@@ -28,7 +28,7 @@
     {
       "id": "q3",
       "questionText": "What is your primary goal for starting a side hustle? (Select one)",
-      "questionType": "select",
+      "questionType": "single-select-with-input",
       "options": [
         "💵 Extra income",
         "🎓 Building new skills",

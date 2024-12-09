@@ -19,7 +19,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
     declare deviceToken: string|null;
     declare numberOfMissedNotifications: number;
     declare answers: Record<string, string>|null;
-
+    declare sideHustlesTopThree: Record<string, string>|null;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
 
@@ -84,6 +84,11 @@ User.init({
         allowNull: true,
       },
 
+      sideHustlesTopThree:{
+        type: DataTypes.JSONB,
+        allowNull: true,
+      },
+
       createdAt: {
         type: DataTypes.DATE,
       },
@@ -103,6 +108,7 @@ export class Roadmap extends Model<InferAttributes<Roadmap>, InferCreationAttrib
     declare roadmapData: RoadmapSteps;
     declare userId: ForeignKey<User['id']>;
     declare progress: number; // new property to track progress
+    declare totalNumberOfTasks: number;
     declare createdAt?: Date;
     declare updatedAt?: Date;
 }
@@ -127,6 +133,15 @@ Roadmap.init(
         defaultValue: 0,
         allowNull: false,
       },
+
+      totalNumberOfTasks: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+      },
+
+      
+      
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE,
 

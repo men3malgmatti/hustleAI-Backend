@@ -8,7 +8,7 @@ import { Roadmap } from "../db/models";
 export type OnboardingQuestion={
     id:string,
     questionText:string,
-    questionType:'text'|'select'|'multi-select',
+    questionType:'text'|'select'|'multi-select'| 'multi-select-with-input' | 'single-select-with-input',
     options:string[]|null |undefined,
 }
 
@@ -78,8 +78,13 @@ export const onboardingRoutes = (app, usersStore:UsersStore) => {
     try {
 
       const sideHustles = await getSideHustlesFitBasedOnAnswers(parseAnswersForAi);
-      
+
+      // save answers to db
       await usersStore.saveUserAnswers(uid,parseAnswersForAi);        
+
+      // save side hustles to db
+      await usersStore.saveUserSideHustlesTopThree(uid,sideHustles);
+
 
       res.json({ success: true, data: sideHustles });
     
@@ -112,6 +117,13 @@ export const onboardingRoutes = (app, usersStore:UsersStore) => {
     // Send answers to AI
     const roadmap = await getSideHustleRoadmap(sideHustleRoadmapRequest);
 
+    const totalNumberOfTasks = roadmap.roadmap.reduce((acc, level) => acc + level.sublevels.reduce((subAcc, sublevel) => subAcc + sublevel.tasks.length, 0), 0)
+
+
+    console.log('====================================');
+    console.log('totalNumberOfTasks',totalNumberOfTasks);
+    console.log('====================================');
+
     // save roadmap to db
 
     const {uid} = req.userInfo;
@@ -120,12 +132,15 @@ export const onboardingRoutes = (app, usersStore:UsersStore) => {
 
       // create new roadmap in db
 
-      await Roadmap.create({
+      const newRoadmap = await Roadmap.create({
         userId:uid,
         roadmapData:roadmap,
-        name:sideHustleRoadmapRequest.sideHustle
+        name:sideHustleRoadmapRequest.sideHustle,
+        totalNumberOfTasks:totalNumberOfTasks
       });
 
+
+      res.json({ success: true, data: newRoadmap });
        
     } catch (error) {
         console.log('====================================');
@@ -133,7 +148,7 @@ export const onboardingRoutes = (app, usersStore:UsersStore) => {
         console.log('====================================');
     }
     
-    res.json({ success: true, data: roadmap });
+   
   });
 
 
