@@ -371,9 +371,9 @@ export const getSideHustlesFitBasedOnAnswers = async (answers:{
   const userMessage= `user profile:\n\n${userAnswersString}\n\n\nBased on this user profile, I want the top 3 side hustles tailored to their information. For each side hustle, include:\n- The name of the side hustle. \n- The reason why this side hustle is a good fit for the user.\n- The current market status for this side hustle.\n- The potential earning prospects.\n- The difficulty level (e.g., Beginner, Intermediate, Advanced).`;
 
   // const chatResponse= await ai.chat(systemMessage, userMessage, jsonSchema);
-
+// 
   // read the response from a file
-  const chatResponse= require('../response.json');
+ const chatResponse= require('../response.json');
 
 
   const content = chatResponse.choices[0].message.content;

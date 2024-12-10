@@ -121,6 +121,16 @@ export const completeTask = async (app)=>{
    
     const roadmap = await Roadmap.findOne({where:{userId:req.userInfo.uid}})
 
+    // check if the task is the last task 
+
+    const totalNumberOfTasks = roadmap?.toJSON().totalNumberOfTasks
+
+    const progress = roadmap?.toJSON().progress
+
+    if(progress === totalNumberOfTasks){
+      return res.json({error:'No more tasks to complete'})
+    }
+
     const updatedRoadmap = await roadmap?.update({progress:roadmap.progress + 1})
 
     res.json({updatedRoadmap})

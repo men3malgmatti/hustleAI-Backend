@@ -2,16 +2,23 @@
 import { Response } from 'express';
 import { OnboardingQuestion } from '../db/models';
 import verifyAdmin from '../middlewares/adminAuth';
-import questionsData from "../../questions.json"; // Import questions data
+// import questionsData from "../../questions.json"; // Import questions data
 import { Request } from '../types';
 
 export const adminOnboardingRoutes = (app) => {
   // Create a new question
   app.post('/admin/onboarding/questions',verifyAdmin, async (req: Request, res: Response) => {
 
-    const { questionText, questionType, options } = req.body;
+    const { questionText, questionType, options, id } = req.body;
+
+
+    console.log('====================================');
+    console.log('adminOnboardingRoutes questions',req.body);
+    console.log('====================================');
+
     try {
       const question = await OnboardingQuestion.create({
+        id:parseInt(id),
         questionText,
         questionType,
         options,
@@ -69,9 +76,11 @@ export const adminOnboardingRoutes = (app) => {
     
 
     try {
-      // const questions = await OnboardingQuestion.findAll();
+      const questions = await OnboardingQuestion.findAll({
+        order: [['id', 'ASC']]
+      });
 
-      const questions = questionsData.questions; // Use imported questions data
+      // const questions = questionsData.questions; // Use imported questions data
 
       res.json({ questions });
     } catch (error) {

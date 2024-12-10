@@ -28,8 +28,11 @@
                 <option value="text">Text</option>
                 <option value="select">Select</option>
                 <option value="multi-select">Multi-select</option>
+                <option value="multi-select-with-input">Multi-select with input</option>
+                <option value="single-select-with-input">Select with input</option>
             </select><br>
             <input type="text" id="options" placeholder="Options (comma-separated)"><br>
+            <input type="text" id="id" placeholder="ID"><br>
             <button type="submit">Create Question</button>
         </form>
         <!-- ...additional UI elements for reading, updating, and deleting questions... -->
@@ -199,13 +202,14 @@
             const questionText = document.getElementById('questionText').value;
             const questionType = document.getElementById('questionType').value;
             const options = document.getElementById('options').value.split(',');
+            const id = document.getElementById('id').value;
             fetch('/admin/onboarding/questions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + idToken
                 },
-                body: JSON.stringify({ questionText, questionType, options })
+                body: JSON.stringify({ questionText, questionType, options, id })
             })
             .then(response => response.json())
             .then(data => {
@@ -224,7 +228,20 @@
         function addQuestionToList(question, idToken) {
             const questionsList = document.getElementById('questions');
             const li = document.createElement('li');
-            li.textContent = question.questionText;
+            
+            // Create elements to display question ID and type
+            const idSpan = document.createElement('span');
+            idSpan.textContent = `ID: ${question.id} `;
+            
+            const typeSpan = document.createElement('span');
+            typeSpan.textContent = `Type: ${question.questionType} `;
+            
+            const textSpan = document.createElement('span');
+            textSpan.textContent = question.questionText;
+            
+            li.appendChild(idSpan);
+            li.appendChild(typeSpan);
+            li.appendChild(textSpan);
             
             // Display question options if they exist
             if (question.options && question.options.length > 0) {

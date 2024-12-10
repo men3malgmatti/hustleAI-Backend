@@ -162,7 +162,7 @@ export class OnboardingQuestion extends Model<
 > {
   declare id: number;
   declare questionText: string;
-  declare questionType: string; // e.g., 'text', 'multiple_choice'
+  declare questionType: 'text'|'select'|'multi-select'| 'multi-select-with-input' | 'single-select-with-input'; // e.g., 'text', 'multiple_choice'
   declare options?: string[];   // For multiple-choice questions
   declare createdAt?: Date;
   declare updatedAt?: Date;
@@ -174,7 +174,6 @@ OnboardingQuestion.init(
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true,
       },
       questionText: {
         type: DataTypes.STRING,

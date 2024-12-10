@@ -3,31 +3,31 @@ import questionsData from "../../questions.json"; // Import questions data
 import { getSideHustleRoadmap, getSideHustlesFitBasedOnAnswers, SideHustleRoadmapRequest } from "../ai";
 import UsersStore from "../classes/UsersStore";
 import { Request } from "../types";
-import { Roadmap } from "../db/models";
+import { OnboardingQuestion, Roadmap, UserOnboardingAnswer } from "../db/models";
 
-export type OnboardingQuestion={
-    id:string,
-    questionText:string,
-    questionType:'text'|'select'|'multi-select'| 'multi-select-with-input' | 'single-select-with-input',
-    options:string[]|null |undefined,
-}
+// export type OnboardingQuestion={
+//     id:string,
+//     questionText:string,
+//     questionType:'text'|'select'|'multi-select'| 'multi-select-with-input' | 'single-select-with-input',
+//     options:string[]|null |undefined,
+// }
 
-export type OnboardingAnswer={
-    questionId:string,
-    answer:string
-}
+// export type OnboardingAnswer={
+//     questionId:string,
+//     answer:string
+// }
 
 
 const questionKeywords = {
-    'q1':'skills',
-    'q2':'availability',
-    'q3':'primary_goal',
-    'q4':'work_preference',
-    'q5':'financial_comfort',
-    'q6':'biggest_concern',
-    'q7':'approach_to_success',
-    'q8':'confidence_level',
-    'q9':'needs',
+    '1':'skills',
+    '2':'availability',
+    '3':'primary_goal',
+    '4':'work_preference',
+    '5':'financial_comfort',
+    '6':'biggest_concern',
+    '7':'approach_to_success',
+    '8':'confidence_level',
+    '9':'needs',
 
 };
 
@@ -39,7 +39,10 @@ export const onboardingRoutes = (app, usersStore:UsersStore) => {
     console.log('onboardingRoutes');
     console.log('====================================');
     try {
-      const questions = questionsData.questions; // Use imported questions data
+      // const questions = questionsData.questions; // Use imported questions dat
+      const questions = await OnboardingQuestion.findAll({
+        order: [['id', 'ASC']]
+      });
       res.json({ questions });
     } catch (error) {
       console.error('Error fetching onboarding questions:', error);
@@ -50,7 +53,7 @@ export const onboardingRoutes = (app, usersStore:UsersStore) => {
   // Submit answers
   app.post('/onboarding/answers', async (req: Request, res: Response) => {
  
-    const { answers } = req.body as { answers: OnboardingAnswer[] };
+    const { answers } = req.body as { answers: UserOnboardingAnswer[] };
 
     const {uid} = req.userInfo;
 
@@ -71,6 +74,7 @@ export const onboardingRoutes = (app, usersStore:UsersStore) => {
     console.log('====================================');
     console.log('parseAnswersForAi',parseAnswersForAi);
     console.log('====================================');
+
 
 
     // save parsed answers to db
